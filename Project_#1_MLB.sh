@@ -128,21 +128,21 @@ read -p "Select age group (1-3): " age_group
 case "$age_group" in
 1)
 echo "
-TOP 5 by Group A (Age < 25):"
+TOP 5 by SLG in Group A (Age < 25):"
 awk -F, '$8>502 && $3<25' 2024_MLB_Player_Stats.csv | sort -t, -k 22 -nr | head -n 5 | awk -F, '
 {printf("%s (%s) - Age: %d, SLG: %.3f, BA: %.3f, HR: %d\n", $2, $4, $3, $22, $20, $14)}'
 ;;
 
 2)
 echo "
-TOP 5 by Group B (Age 25-30):"
+TOP 5 by SLG in Group B (Age 25-30):"
 awk -F, '$8>502 && $3>=25 && $3<=30' 2024_MLB_Player_Stats.csv | sort -t, -k 22 -nr | head -n 5 | awk -F, '
 {printf("%s (%s) - Age: %d, SLG: %.3f, BA: %.3f, HR: %d\n", $2, $4, $3, $22, $20, $14)}'
 ;;
 
 3)
 echo "
-TOP 5 by Group C (Age > 30):"
+TOP 5 by SLG in Group C (Age > 30):"
 awk -F, '$8>502 && $3>30' 2024_MLB_Player_Stats.csv | sort -t, -k 22 -nr | head -n 5 | awk -F, '
 {printf("%s (%s) - Age: %d, SLG: %.3f, BA: %.3f, HR: %d\n", $2, $4, $3, $22, $20, $14)}'
 ;;
