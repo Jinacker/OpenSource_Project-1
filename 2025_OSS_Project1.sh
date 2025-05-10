@@ -8,6 +8,13 @@ fi
 
 filename="$1"
 
+# CSV 파일 존재 여부 확인
+if [ ! -f "$filename" ]; then
+  echo "Error: File '$filename' not found." 
+  exit 1 # 존재 안할시 에러메세지와 함께 종료 => sh 실행 안됨.
+fi
+
+
 # Who am i ?
 echo "
 **********OSS - Project1**********
