@@ -212,7 +212,7 @@ Date: $(date +%Y/%m/%d)
 PLAYER               HR   RBI     AVG      OBP     OPS
 ---------------------------------------------------------"
 
-# grep으로 해당 팀 선수 목록만 awk로 전달
+# grep으로 해당 팀 선수 목록만 awk로 전달 + 홈런순으로 정렬
 grep ",$i" 2024_MLB_Player_Stats.csv | sort -t, -k 22 -nr | awk -F, -v i=$i ' 
 {printf("%-17s %5s %5s %8s %8s %8s\n",$2,$14,$15,$20,$21,$23)} 
 END {printf("---------------------------------------------------------\nTEAM TOTALS: %d players", (NR))}' 
