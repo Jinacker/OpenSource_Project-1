@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# 실행 인자 확인 
+if [ $# -ne 1 ]; then
+  echo "usage: $0 file"
+  exit 1
+fi
+
+filename="$1"
+
 # Who am i ?
 echo "
 **********OSS - Project1**********
@@ -44,7 +52,7 @@ case $var in
 read -p "Enter a player name to search: " P_name
 echo "
 Player stats for \"$P_name\":" 
-cat 2024_MLB_Player_Stats.csv | awk -F',' -v name="$P_name" '
+cat "$filename" | awk -F',' -v name="$P_name" '
 NR > 1 && $2 == name { 
 found = 1
 printf("Player: %s, Team: %s, Age: %d, WAR: %.1f, HR: %d, BA: %.3f \n", $2,$4,$3,$6,$14,$20)} 
@@ -65,7 +73,7 @@ then echo "
 # head => 5개에서 짜르기.
 # + Except for players less than 502 PA 해야함.
 rank=1
-awk -F, '$8>502' 2024_MLB_Player_Stats.csv | sort -t, -k 22 -nr | head -n 5 | awk -F, -v rank=$rank '
+awk -F, '$8>502' "$filename" | sort -t, -k 22 -nr | head -n 5 | awk -F, -v rank=$rank '
 {printf("%d. %s (Team: %s) - SLG: %.3f, HR: %d, RBI: %d \n",rank,$2,$4,$22,$14,$15)}{rank++}'
 
 else echo "
@@ -96,7 +104,7 @@ total_HR=0
 total_RBI=0
 
 # grep으로 해당 팀 선수 목록만 awk로 전달
-grep ",$i" 2024_MLB_Player_Stats.csv | 
+grep ",$i" "$filename" | 
 awk -F, -v i=$i -v average_age=$average_age -v total_HR=$total_HR -v total_RBI=$total_RBI '
 {average_age+=$3}{total_HR+=$14}{total_RBI+=$15}
  END {printf("Average age: %.1f \nTotal home runs: %d \nTotal RBI: %d \n",(average_age/NR),total_HR,total_RBI )}' 
@@ -129,21 +137,21 @@ case "$age_group" in
 1)
 echo "
 Top 5 by SLG in Group A (Age < 25):"
-awk -F, '$8>502 && $3<25' 2024_MLB_Player_Stats.csv | sort -t, -k 22 -nr | head -n 5 | awk -F, '
+awk -F, '$8>502 && $3<25' "$filename" | sort -t, -k 22 -nr | head -n 5 | awk -F, '
 {printf("%s (%s) - Age: %d, SLG: %.3f, BA: %.3f, HR: %d\n", $2, $4, $3, $22, $20, $14)}'
 ;;
 
 2)
 echo "
 Top 5 by SLG in Group B (Age 25-30):"
-awk -F, '$8>502 && $3>=25 && $3<=30' 2024_MLB_Player_Stats.csv | sort -t, -k 22 -nr | head -n 5 | awk -F, '
+awk -F, '$8>502 && $3>=25 && $3<=30' "$filename" | sort -t, -k 22 -nr | head -n 5 | awk -F, '
 {printf("%s (%s) - Age: %d, SLG: %.3f, BA: %.3f, HR: %d\n", $2, $4, $3, $22, $20, $14)}'
 ;;
 
 3)
 echo "
 Top 5 by SLG in Group C (Age > 30):"
-awk -F, '$8>502 && $3>30' 2024_MLB_Player_Stats.csv | sort -t, -k 22 -nr | head -n 5 | awk -F, '
+awk -F, '$8>502 && $3>30' "$filename" | sort -t, -k 22 -nr | head -n 5 | awk -F, '
 {printf("%s (%s) - Age: %d, SLG: %.3f, BA: %.3f, HR: %d\n", $2, $4, $3, $22, $20, $14)}'
 ;;
 
@@ -184,7 +192,7 @@ fi
 # 해당 조건 만족하는 모든 선수들 출력
 echo "
 Players with HR ≥ $min_HR and BA ≥ $min_BA:" # NR > 1 => 첫째줄 제외
-awk -F, -v min_HR=$min_HR -v min_BA=$min_BA '$8>502 && $14>=min_HR && $20>=min_BA && NR>1' 2024_MLB_Player_Stats.csv | sort -t, -k 14 -nr | awk -F, '
+awk -F, -v min_HR=$min_HR -v min_BA=$min_BA '$8>502 && $14>=min_HR && $20>=min_BA && NR>1' "$filename" | sort -t, -k 14 -nr | awk -F, '
 {printf("%s (%s) - HR: %d, BA: %.3f, RBI: %d, SLG: %.3f \n", $2, $4, $14, $20, $15, $22)}'
 ;;
 
@@ -213,7 +221,7 @@ PLAYER               HR   RBI     AVG      OBP     OPS
 ---------------------------------------------------------"
 
 # grep으로 해당 팀 선수 목록만 awk로 전달 + 홈런순으로 정렬
-grep ",$i" 2024_MLB_Player_Stats.csv | sort -t, -k 22 -nr | awk -F, -v i=$i ' 
+grep ",$i" "$filename" | sort -t, -k 22 -nr | awk -F, -v i=$i ' 
 {printf("%-17s %5s %5s %8s %8s %8s\n",$2,$14,$15,$20,$21,$23)} 
 END {printf("---------------------------------------------------------\nTEAM TOTALS: %d players", (NR))}' 
 break
